@@ -1,5 +1,8 @@
-#include <sys/io.h>
 #include "serial.h"
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/io.h>
 
 int init_serial() {
     outb(PORT + 1, 0x00);
@@ -23,4 +26,18 @@ int init_serial() {
 void write_serial(uint8_t value) {
     while ((inb(PORT + 5) & 0x20) == 0);
     outb(PORT, value);
+}
+
+int putchar(int character) {
+    write_serial((uint8_t) character);
+    return character;
+}
+
+int puts(const char* characters) {
+    size_t length = strlen(characters);
+    for (size_t i = 0; i < length; ++i) {
+        putchar(characters[i]);
+    }
+    putchar('\n');
+    return 1;
 }
